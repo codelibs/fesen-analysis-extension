@@ -29,6 +29,7 @@
 		<fesen.version>0.14.0-SNAPSHOT</fesen.version>
 		<fesen.runner.version>0.14.0-SNAPSHOT</fesen.runner.version>
 		<fesen.plugin.classname>org.codelibs.fesen.extension.ExtensionPlugin</fesen.plugin.classname>
+		<maven.compiler.target>11</maven.compiler.target>
 		<lucene.version>8.9.0</lucene.version>
 		<log4j.version>2.11.1</log4j.version>
 	</properties>
@@ -38,7 +39,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<release>11</release>
+					<release>${maven.compiler.target}</release>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
