@@ -26,8 +26,8 @@
 		<version>9</version>
 	</parent>
 	<properties>
-		<fesen.version>0.14.0-SNAPSHOT</fesen.version>
-		<fesen.runner.version>0.14.0-SNAPSHOT</fesen.runner.version>
+		<fesen.version>0.14.0</fesen.version>
+		<fesen.runner.version>0.14.0</fesen.runner.version>
 		<fesen.plugin.classname>org.codelibs.fesen.extension.ExtensionPlugin</fesen.plugin.classname>
 		<maven.compiler.target>11</maven.compiler.target>
 		<lucene.version>8.9.0</lucene.version>
