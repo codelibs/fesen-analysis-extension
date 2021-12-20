@@ -1,10 +1,10 @@
-Elasticsearch Analysis Extension
+Fesen Analysis Extension
 [![Java CI with Maven](https://github.com/codelibs/fesen-analysis-extension/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fesen-analysis-extension/actions/workflows/maven.yml)
 =======================
 
 ## Overview
 
-Elasticsearch Analysis Extension Plugin provides Tokenizer/CharFilter/TokenFilter.
+Fesen Analysis Extension Plugin provides Tokenizer/CharFilter/TokenFilter.
 
 ## Version
 
