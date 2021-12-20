@@ -1,5 +1,5 @@
 Elasticsearch Analysis Extension
-[![Java CI with Maven](https://github.com/codelibs/elasticsearch-analysis-extension/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/elasticsearch-analysis-extension/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/codelibs/fesen-analysis-extension/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fesen-analysis-extension/actions/workflows/maven.yml)
 =======================
 
 ## Overview
@@ -8,15 +8,15 @@ Elasticsearch Analysis Extension Plugin provides Tokenizer/CharFilter/TokenFilte
 
 ## Version
 
-[Versions in Maven Repository](https://repo1.maven.org/maven2/org/codelibs/elasticsearch-analysis-extension/)
+[Versions in Maven Repository](https://repo1.maven.org/maven2/org/codelibs/fesen-analysis-extension/)
 
 ### Issues/Questions
 
-Please file an [issue](https://github.com/codelibs/elasticsearch-analysis-extension/issues "issue").
+Please file an [issue](https://github.com/codelibs/fesen-analysis-extension/issues "issue").
 
 ## Installation
 
-    $ $ES_HOME/bin/elasticsearch-plugin install org.codelibs:elasticsearch-analysis-extension:6.3.1
+    $ $ES_HOME/bin/fesen-plugin install org.codelibs:fesen-analysis-extension:6.3.1
 
 ## References
 
