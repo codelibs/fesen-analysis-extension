@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Settings.Builder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.runner.FesenRunner;
@@ -28,7 +27,7 @@ public class PosConcatenationFilterFactoryTest {
 
     private FesenRunner runner;
 
-    private int numOfNode = 1;
+    private final int numOfNode = 1;
 
     private File[] numberSuffixFiles;
 
@@ -38,15 +37,12 @@ public class PosConcatenationFilterFactoryTest {
     public void setUp() throws Exception {
         clusterName = "es-analysisja-" + System.currentTimeMillis();
         runner = new FesenRunner();
-        runner.onBuild(new FesenRunner.Builder() {
-            @Override
-            public void build(final int number, final Builder settingsBuilder) {
-                settingsBuilder.put("http.cors.enabled", true);
-                settingsBuilder.put("http.cors.allow-origin", "*");
-                settingsBuilder.put("discovery.type", "single-node");
-                // settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9301");
-                // settingsBuilder.putList("cluster.initial_master_nodes", "127.0.0.1:9301");
-            }
+        runner.onBuild((number, settingsBuilder) -> {
+            settingsBuilder.put("http.cors.enabled", true);
+            settingsBuilder.put("http.cors.allow-origin", "*");
+            settingsBuilder.put("discovery.type", "single-node");
+            // settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9301");
+            // settingsBuilder.putList("cluster.initial_master_nodes", "127.0.0.1:9301");
         }).build(newConfigs().clusterName(clusterName).numOfNode(numOfNode).pluginTypes("org.codelibs.fesen.extension.ExtensionPlugin"));
 
         numberSuffixFiles = null;
@@ -57,7 +53,7 @@ public class PosConcatenationFilterFactoryTest {
         runner.close();
         runner.clean();
         if (numberSuffixFiles != null) {
-            for (File file : numberSuffixFiles) {
+            for (final File file : numberSuffixFiles) {
                 file.deleteOnExit();
             }
         }
@@ -67,22 +63,19 @@ public class PosConcatenationFilterFactoryTest {
     public void test_basic() throws Exception {
         numberSuffixFiles = new File[numOfNode];
         for (int i = 0; i < numOfNode; i++) {
-            String homePath = runner.getNode(i).settings().get("path.home");
+            final String homePath = runner.getNode(i).settings().get("path.home");
             numberSuffixFiles[i] = new File(new File(homePath, "config"), "tags.txt");
             updateDictionary(numberSuffixFiles[i], "名詞-形容動詞語幹\n名詞-サ変接続");
         }
 
         runner.ensureYellow();
-        Node node = runner.node();
+        final Node node = runner.node();
 
         final String index = "dataset";
 
-        final String indexSettings = "{\"index\":{\"analysis\":{"
-                + "\"filter\":{"
-                + "\"tag_concat_filter\":{\"type\":\"kuromoji_pos_concat\",\"tags_path\":\"tags.txt\"}"
-                + "},"//
-                + "\"analyzer\":{"
-                + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\"},"
+        final String indexSettings = "{\"index\":{\"analysis\":{" + "\"filter\":{"
+                + "\"tag_concat_filter\":{\"type\":\"kuromoji_pos_concat\",\"tags_path\":\"tags.txt\"}" + "},"//
+                + "\"analyzer\":{" + "\"ja_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\"},"
                 + "\"ja_concat_analyzer\":{\"type\":\"custom\",\"tokenizer\":\"reloadable_kuromoji_tokenizer\",\"filter\":[\"tag_concat_filter\"]}"
                 + "}"//
                 + "}}}";
@@ -90,23 +83,21 @@ public class PosConcatenationFilterFactoryTest {
         runner.ensureYellow();
 
         {
-            String text = "詳細設計";
+            final String text = "詳細設計";
             try (CurlResponse response = EcrCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_concat_analyzer\",\"text\":\"" + text + "\"}").execute()) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> tokens = (List<Map<String, Object>>) response
-                        .getContent(EcrCurl.jsonParser()).get("tokens");
+                final List<Map<String, Object>> tokens =
+                        (List<Map<String, Object>>) response.getContent(EcrCurl.jsonParser()).get("tokens");
                 assertEquals(1, tokens.size());
                 assertEquals("詳細設計", tokens.get(0).get("token").toString());
             }
         }
     }
 
-    private void updateDictionary(File file, String content)
-            throws IOException, UnsupportedEncodingException,
-            FileNotFoundException {
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), "UTF-8"))) {
+    private void updateDictionary(final File file, final String content)
+            throws IOException, UnsupportedEncodingException, FileNotFoundException {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
             bw.write(content);
             bw.flush();
         }

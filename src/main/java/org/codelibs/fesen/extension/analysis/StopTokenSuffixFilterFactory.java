@@ -17,7 +17,8 @@ public class StopTokenSuffixFilterFactory extends AbstractTokenFilterFactory {
 
     private final boolean ignoreCase;
 
-    public StopTokenSuffixFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name, final Settings settings) {
+    public StopTokenSuffixFilterFactory(final IndexSettings indexSettings, final Environment environment, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
 
         final List<String> wordList = Analysis.getWordList(environment, settings, "stopwords");
@@ -27,7 +28,7 @@ public class StopTokenSuffixFilterFactory extends AbstractTokenFilterFactory {
             stopwords = new String[0];
         }
 
-        ignoreCase = settings.getAsBoolean("ignore_case", Boolean.FALSE).booleanValue();
+        ignoreCase = settings.getAsBoolean("ignore_case", Boolean.FALSE);
         if (ignoreCase) {
             for (int i = 0; i < stopwords.length; i++) {
                 stopwords[i] = stopwords[i].toLowerCase(Locale.ROOT);

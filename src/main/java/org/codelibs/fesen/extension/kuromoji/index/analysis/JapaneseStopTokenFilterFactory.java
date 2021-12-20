@@ -19,7 +19,6 @@
 
 package org.codelibs.fesen.extension.kuromoji.index.analysis;
 
-
 import static java.util.Collections.singletonMap;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractTokenFilterFactory;
 import org.codelibs.fesen.index.analysis.Analysis;
 
-public class JapaneseStopTokenFilterFactory extends AbstractTokenFilterFactory{
+public class JapaneseStopTokenFilterFactory extends AbstractTokenFilterFactory {
     private static final Map<String, Set<?>> NAMED_STOP_WORDS = singletonMap("_japanese_", JapaneseAnalyzer.getDefaultStopSet());
 
     private final CharArraySet stopWords;
@@ -45,21 +44,21 @@ public class JapaneseStopTokenFilterFactory extends AbstractTokenFilterFactory{
 
     private final boolean removeTrailing;
 
-    public JapaneseStopTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public JapaneseStopTokenFilterFactory(final IndexSettings indexSettings, final Environment env, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
         this.ignoreCase = settings.getAsBoolean("ignore_case", false);
         this.removeTrailing = settings.getAsBoolean("remove_trailing", true);
-        this.stopWords = Analysis.parseWords(env, settings, "stopwords",
-                JapaneseAnalyzer.getDefaultStopSet(), NAMED_STOP_WORDS, ignoreCase);
+        this.stopWords =
+                Analysis.parseWords(env, settings, "stopwords", JapaneseAnalyzer.getDefaultStopSet(), NAMED_STOP_WORDS, ignoreCase);
     }
 
     @Override
-    public TokenStream create(TokenStream tokenStream) {
+    public TokenStream create(final TokenStream tokenStream) {
         if (removeTrailing) {
             return new StopFilter(tokenStream, stopWords);
-        } else {
-            return new SuggestStopFilter(tokenStream, stopWords);
         }
+        return new SuggestStopFilter(tokenStream, stopWords);
     }
 
     public Set<?> stopWords() {

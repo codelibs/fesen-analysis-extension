@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.codelibs.curl.CurlResponse;
 import org.codelibs.fesen.common.settings.Settings;
-import org.codelibs.fesen.common.settings.Settings.Builder;
 import org.codelibs.fesen.common.xcontent.XContentType;
 import org.codelibs.fesen.node.Node;
 import org.codelibs.fesen.runner.FesenRunner;
@@ -21,7 +20,7 @@ public class StopTokenSuffixFilterFactoryTest {
 
     private FesenRunner runner;
 
-    private int numOfNode = 1;
+    private final int numOfNode = 1;
 
     private String clusterName;
 
@@ -29,15 +28,12 @@ public class StopTokenSuffixFilterFactoryTest {
     public void setUp() throws Exception {
         clusterName = "es-analysisja-" + System.currentTimeMillis();
         runner = new FesenRunner();
-        runner.onBuild(new FesenRunner.Builder() {
-            @Override
-            public void build(final int number, final Builder settingsBuilder) {
-                settingsBuilder.put("http.cors.enabled", true);
-                settingsBuilder.put("http.cors.allow-origin", "*");
-                settingsBuilder.put("discovery.type", "single-node");
-                // settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9301");
-                // settingsBuilder.putList("cluster.initial_master_nodes", "127.0.0.1:9301");
-            }
+        runner.onBuild((number, settingsBuilder) -> {
+            settingsBuilder.put("http.cors.enabled", true);
+            settingsBuilder.put("http.cors.allow-origin", "*");
+            settingsBuilder.put("discovery.type", "single-node");
+            // settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9301");
+            // settingsBuilder.putList("cluster.initial_master_nodes", "127.0.0.1:9301");
         }).build(newConfigs().clusterName(clusterName).numOfNode(numOfNode).pluginTypes("org.codelibs.fesen.extension.ExtensionPlugin"));
 
     }
@@ -51,7 +47,7 @@ public class StopTokenSuffixFilterFactoryTest {
     @Test
     public void test_basic() throws Exception {
         runner.ensureYellow();
-        Node node = runner.node();
+        final Node node = runner.node();
 
         final String index = "dataset";
 
@@ -65,11 +61,12 @@ public class StopTokenSuffixFilterFactoryTest {
         runner.ensureYellow();
 
         {
-            String text = "aaa bbb ccc ddd eee";
+            final String text = "aaa bbb ccc ddd eee";
             try (CurlResponse response = EcrCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_stop_analyzer\",\"text\":\"" + text + "\"}").execute()) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> tokens = (List<Map<String, Object>>) response.getContent(EcrCurl.jsonParser()).get("tokens");
+                final List<Map<String, Object>> tokens =
+                        (List<Map<String, Object>>) response.getContent(EcrCurl.jsonParser()).get("tokens");
                 assertEquals(3, tokens.size());
                 assertEquals("aaa", tokens.get(0).get("token").toString());
                 assertEquals("ccc", tokens.get(1).get("token").toString());
@@ -78,11 +75,12 @@ public class StopTokenSuffixFilterFactoryTest {
         }
 
         {
-            String text = "abbb bbba";
+            final String text = "abbb bbba";
             try (CurlResponse response = EcrCurl.post(node, "/" + index + "/_analyze").header("Content-Type", "application/json")
                     .body("{\"analyzer\":\"ja_stop_analyzer\",\"text\":\"" + text + "\"}").execute()) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> tokens = (List<Map<String, Object>>) response.getContent(EcrCurl.jsonParser()).get("tokens");
+                final List<Map<String, Object>> tokens =
+                        (List<Map<String, Object>>) response.getContent(EcrCurl.jsonParser()).get("tokens");
                 assertEquals(1, tokens.size());
                 assertEquals("bbba", tokens.get(0).get("token").toString());
             }

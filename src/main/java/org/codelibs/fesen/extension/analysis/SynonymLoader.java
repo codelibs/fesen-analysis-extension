@@ -126,7 +126,7 @@ public class SynonymLoader {
             final List<String> rules = Analysis.getWordList(env, settings, "synonyms");
             final StringBuilder sb = new StringBuilder();
             for (final String line : rules) {
-                sb.append(line).append(System.getProperty("line.separator"));
+                sb.append(line).append(System.lineSeparator());
             }
             reader = new StringReader(sb.toString());
         } else if (settings.get("synonyms_path") != null) {

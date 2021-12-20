@@ -27,7 +27,6 @@ import org.apache.lucene.analysis.ja.JapaneseTokenizer;
 import org.apache.lucene.analysis.ja.dict.UserDictionary;
 import org.codelibs.fesen.common.settings.Settings;
 import org.codelibs.fesen.env.Environment;
-import org.codelibs.fesen.extension.kuromoji.index.analysis.KuromojiTokenizerFactory;
 import org.codelibs.fesen.index.IndexSettings;
 import org.codelibs.fesen.index.analysis.AbstractIndexAnalyzerProvider;
 import org.codelibs.fesen.index.analysis.Analysis;
@@ -50,6 +49,5 @@ public class KuromojiAnalyzerProvider extends AbstractIndexAnalyzerProvider<Japa
     public JapaneseAnalyzer get() {
         return this.analyzer;
     }
-
 
 }

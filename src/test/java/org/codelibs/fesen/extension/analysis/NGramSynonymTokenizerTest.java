@@ -34,8 +34,6 @@ import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.codelibs.fesen.extension.analysis.NGramSynonymTokenizer;
-import org.codelibs.fesen.extension.analysis.SynonymLoader;
 import org.codelibs.fesen.extension.analysis.NGramSynonymTokenizer.MyToken;
 import org.junit.Test;
 
@@ -104,25 +102,26 @@ public class NGramSynonymTokenizerTest {
                 src1.substring(0, NGramSynonymTokenizer.BUFFER_SIZE + 2), src2.substring(0, NGramSynonymTokenizer.BUFFER_SIZE - 2));
     }
 
-    private NGramSynonymTokenizer getTokenizer(String input) throws IOException {
-        NGramSynonymTokenizer tokenizer = new NGramSynonymTokenizer(NGramSynonymTokenizer.DEFAULT_N_SIZE,
+    private NGramSynonymTokenizer getTokenizer(final String input) throws IOException {
+        final NGramSynonymTokenizer tokenizer = new NGramSynonymTokenizer(NGramSynonymTokenizer.DEFAULT_N_SIZE,
                 NGramSynonymTokenizer.DEFAULT_DELIMITERS, false, true, null);
         tokenizer.setReader(new StringReader(input));
         tokenizer.reset();
         return tokenizer;
     }
 
-    private void assertBlocks(NGramSynonymTokenizer tokenizer, String expBlkStarts, String... expBlocks) throws Exception {
-        String[] params = expBlkStarts.split(",");
+    private void assertBlocks(final NGramSynonymTokenizer tokenizer, final String expBlkStarts, final String... expBlocks)
+            throws Exception {
+        final String[] params = expBlkStarts.split(",");
         final int len = params.length;
-        int[] exps = new int[len];
+        final int[] exps = new int[len];
         for (int i = 0; i < len; i++) {
             exps[i] = Integer.parseInt(params[i]);
         }
         assertBlocks(tokenizer, exps, expBlocks);
     }
 
-    private void assertBlocks(NGramSynonymTokenizer tokenizer, int[] expBlkStarts, String... expBlocks) throws Exception {
+    private void assertBlocks(final NGramSynonymTokenizer tokenizer, final int[] expBlkStarts, final String... expBlocks) throws Exception {
         final int len = expBlkStarts.length;
         assertEquals(len, expBlocks.length);
 
@@ -135,12 +134,12 @@ public class NGramSynonymTokenizerTest {
         assertFalse(tokenizer.getNextBlock());
     }
 
-    private String getLengthDummyBlock(int length, char blockChar, char... eobChars) {
-        StringBuilder sb = new StringBuilder();
+    private String getLengthDummyBlock(final int length, final char blockChar, final char... eobChars) {
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
             sb.append(blockChar);
         }
-        for (char eobChar : eobChars) {
+        for (final char eobChar : eobChars) {
             sb.append(eobChar);
         }
         return sb.toString();
@@ -148,19 +147,19 @@ public class NGramSynonymTokenizerTest {
 
     @Test
     public void testMyTokensComparator() throws Exception {
-        PriorityQueue<MyToken> pq = new PriorityQueue<MyToken>(10, new NGramSynonymTokenizer.MyTokensComparator());
+        final PriorityQueue<MyToken> pq = new PriorityQueue<>(10, new NGramSynonymTokenizer.MyTokensComparator());
 
-        MyToken t1 = new MyToken("", 10, 11, 1);
+        final MyToken t1 = new MyToken("", 10, 11, 1);
         pq.add(t1);
-        MyToken t2 = new MyToken("", 9, 11, 0);
+        final MyToken t2 = new MyToken("", 9, 11, 0);
         pq.add(t2);
-        MyToken t3 = new MyToken("", 9, 11, 1);
+        final MyToken t3 = new MyToken("", 9, 11, 1);
         pq.add(t3);
-        MyToken t4 = new MyToken("", 8, 11, 1);
+        final MyToken t4 = new MyToken("", 8, 11, 1);
         pq.add(t4);
-        MyToken t5 = new MyToken("", 7, 11, 1);
+        final MyToken t5 = new MyToken("", 7, 11, 1);
         pq.add(t5);
-        MyToken t6 = new MyToken("", 7, 10, 1);
+        final MyToken t6 = new MyToken("", 7, 10, 1);
         pq.add(t6);
 
         assertEquals(t6, pq.poll());
@@ -174,17 +173,17 @@ public class NGramSynonymTokenizerTest {
 
     @Test
     public void testMyTokenIdentical() throws Exception {
-        MyToken t1 = new MyToken("token", 10, 11, 1);
-        MyToken t2 = new MyToken("token", 10, 11, 1);
+        final MyToken t1 = new MyToken("token", 10, 11, 1);
+        final MyToken t2 = new MyToken("token", 10, 11, 1);
         assertFalse(t1.identical(t2));
         assertFalse(t2.identical(t2));
         assertFalse(t2.identical(t1));
 
-        MyToken t3 = new MyToken("token", 10, 11, 0);
+        final MyToken t3 = new MyToken("token", 10, 11, 0);
         assertTrue(t1.identical(t3));
         assertFalse(t3.identical(t1));
 
-        MyToken t4 = new MyToken("token", 10, 11, 0);
+        final MyToken t4 = new MyToken("token", 10, 11, 0);
         assertTrue(t1.identical(t4));
         assertTrue(t3.identical(t4));
         assertTrue(t4.identical(t3));
@@ -192,23 +191,23 @@ public class NGramSynonymTokenizerTest {
 
     @Test
     public void testGetNextUniqueToken() throws Exception {
-        PriorityQueue<MyToken> pq = new PriorityQueue<MyToken>(10, new NGramSynonymTokenizer.MyTokensComparator());
+        final PriorityQueue<MyToken> pq = new PriorityQueue<>(10, new NGramSynonymTokenizer.MyTokensComparator());
 
-        MyToken t1 = new MyToken("t1", 10, 11, 1);
+        final MyToken t1 = new MyToken("t1", 10, 11, 1);
         pq.add(t1);
-        MyToken t2 = new MyToken("t2", 9, 11, 0);
+        final MyToken t2 = new MyToken("t2", 9, 11, 0);
         pq.add(t2);
-        MyToken t3 = new MyToken("t3", 9, 11, 1);
+        final MyToken t3 = new MyToken("t3", 9, 11, 1);
         pq.add(t3);
-        MyToken t4 = new MyToken("t2", 9, 11, 0);
+        final MyToken t4 = new MyToken("t2", 9, 11, 0);
         pq.add(t4);
-        MyToken t5 = new MyToken("t5", 8, 11, 1);
+        final MyToken t5 = new MyToken("t5", 8, 11, 1);
         pq.add(t5);
-        MyToken t6 = new MyToken("t5", 8, 11, 0);
+        final MyToken t6 = new MyToken("t5", 8, 11, 0);
         pq.add(t6);
-        MyToken t7 = new MyToken("t7", 7, 11, 1);
+        final MyToken t7 = new MyToken("t7", 7, 11, 1);
         pq.add(t7);
-        MyToken t8 = new MyToken("t8", 7, 10, 1);
+        final MyToken t8 = new MyToken("t8", 7, 10, 1);
         pq.add(t8);
 
         assertEquals(t8, NGramSynonymTokenizer.getNextUniqueToken(pq, null));
@@ -296,8 +295,8 @@ public class NGramSynonymTokenizerTest {
 
     @Test
     public void testSingleSynonymIgnoreCase() throws Exception {
-        Analyzer a = new NGramSynonymTokenizerTestAnalyzer(2, false, "A,AA,AAA");
-        TokenStream stream = a.tokenStream("f", new StringReader("aaa"));
+        final Analyzer a = new NGramSynonymTokenizerTestAnalyzer(2, false, "A,AA,AAA");
+        final TokenStream stream = a.tokenStream("f", new StringReader("aaa"));
         stream.reset();
         assertTokenStream(stream, "a,0,3,1");
     }
@@ -1370,27 +1369,27 @@ public class NGramSynonymTokenizerTest {
                 "gfed,0,4,1/fedc,1,5,1/edc,2,5,0/dc,3,5,0/c,4,5,0/a,5,6,1/aa,5,6,0/b,6,7,1/bb,6,7,0/c,7,8,1/cd,7,9,0/cde,7,10,0/cdef,7,11,0/defg,8,12,1/efg,9,12,0/fg,10,12,0/g,11,12,0/a,12,13,1/aa,12,13,0");
     }
 
-    private void assertTokenStream(TokenStream stream, String expectedStream) throws Exception {
+    private void assertTokenStream(final TokenStream stream, final String expectedStream) throws Exception {
 
-        String[] expectedTokens = expectedStream.split("/");
+        final String[] expectedTokens = expectedStream.split("/");
         int count = 0;
-        for (String expectedToken : expectedTokens) {
-            String[] attrs = expectedToken.split(",");
+        for (final String expectedToken : expectedTokens) {
+            final String[] attrs = expectedToken.split(",");
             assertTrue(stream.incrementToken());
 
-            String term = attrs[0];
+            final String term = attrs[0];
             assertAttribute(count, "term", term, stream.getAttribute(CharTermAttribute.class).toString());
 
             if (attrs.length > 1) {
-                int so = Integer.parseInt(attrs[1]);
+                final int so = Integer.parseInt(attrs[1]);
                 assertAttribute(count, "startOffset", so, stream.getAttribute(OffsetAttribute.class).startOffset());
 
                 if (attrs.length > 2) {
-                    int eo = Integer.parseInt(attrs[2]);
+                    final int eo = Integer.parseInt(attrs[2]);
                     assertAttribute(count, "endOffset", eo, stream.getAttribute(OffsetAttribute.class).endOffset());
 
                     if (attrs.length > 3) {
-                        int pi = Integer.parseInt(attrs[3]);
+                        final int pi = Integer.parseInt(attrs[3]);
                         assertAttribute(count, "posInc", pi, stream.getAttribute(PositionIncrementAttribute.class).getPositionIncrement());
                     }
                 }
@@ -1400,16 +1399,17 @@ public class NGramSynonymTokenizerTest {
         assertFalse(stream.incrementToken());
     }
 
-    private void assertAttribute(int count, String type, String expected, String actual) throws Exception {
-        if (expected.equals("[null]"))
+    private void assertAttribute(final int count, final String type, final String expected, final String actual) throws Exception {
+        if ("[null]".equals(expected)) {
             assertNull(String.format("%s is invalid at token %d, expected : \"%s\" != actual : \"%s\"", type, count, expected, actual),
                     actual);
-        else
+        } else {
             assertEquals(String.format("%s is invalid at token %d, expected : \"%s\" != actual : \"%s\"", type, count, expected, actual),
                     expected, actual);
+        }
     }
 
-    private void assertAttribute(int count, String type, int expected, int actual) throws Exception {
+    private void assertAttribute(final int count, final String type, final int expected, final int actual) throws Exception {
         assertEquals(String.format("%s is invalid at token %d, expected : \"%d\" != actual : \"%d\"", type, count, expected, actual),
                 expected, actual);
     }
@@ -1421,65 +1421,63 @@ public class NGramSynonymTokenizerTest {
         final boolean expand;
         final SynonymMap synonyms;
 
-        public NGramSynonymTokenizerTestAnalyzer(int n) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n) {
             this(n, NGramSynonymTokenizer.DEFAULT_DELIMITERS, false);
         }
 
-        public NGramSynonymTokenizerTestAnalyzer(int n, boolean expand) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n, final boolean expand) {
             this(n, NGramSynonymTokenizer.DEFAULT_DELIMITERS, expand);
         }
 
-        public NGramSynonymTokenizerTestAnalyzer(int n, String delimiters, boolean expand) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n, final String delimiters, final boolean expand) {
             this(n, delimiters, expand, (String) null);
         }
 
-        public NGramSynonymTokenizerTestAnalyzer(int n, boolean expand, String synonyms) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n, final boolean expand, final String synonyms) {
             this(n, NGramSynonymTokenizer.DEFAULT_DELIMITERS, expand, synonyms);
         }
 
-        public NGramSynonymTokenizerTestAnalyzer(int n, String delimiters, boolean expand, String synonyms) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n, final String delimiters, final boolean expand, final String synonyms) {
             this.n = n;
             this.delimiters = delimiters;
             this.expand = expand;
             this.synonyms = getSynonymMap(synonyms, expand);
         }
 
-        public NGramSynonymTokenizerTestAnalyzer(int n, String delimiters, boolean expand, SynonymMap synonyms) {
+        public NGramSynonymTokenizerTestAnalyzer(final int n, final String delimiters, final boolean expand, final SynonymMap synonyms) {
             this.n = n;
             this.delimiters = delimiters;
             this.expand = expand;
             this.synonyms = synonyms;
         }
 
-        protected TokenStreamComponents createComponents(String fieldName) {
-            final Tokenizer source =
-                    new NGramSynonymTokenizer(n, delimiters, expand, true, new SynonymLoader(null, null, expand, null) {
-                        @Override
-                        public SynonymMap getSynonymMap() {
-                            return synonyms;
-                        }
+        @Override
+        protected TokenStreamComponents createComponents(final String fieldName) {
+            final Tokenizer source = new NGramSynonymTokenizer(n, delimiters, expand, true, new SynonymLoader(null, null, expand, null) {
+                @Override
+                public SynonymMap getSynonymMap() {
+                    return synonyms;
+                }
 
-                        @Override
-                        protected void createSynonymMap(boolean reload) {
-                            // nothing
-                        }
-                    });
+                @Override
+                protected void createSynonymMap(final boolean reload) {
+                    // nothing
+                }
+            });
             return new TokenStreamComponents(source);
         }
 
-        private SynonymMap getSynonymMap(String synonyms, boolean expand) {
-            if (synonyms != null) {
-                SolrSynonymParser parser = new SolrSynonymParser(true, expand, SynonymLoader.getAnalyzer(true));
-                try {
-                    parser.parse(new StringReader(synonyms.replace('/', '\n')));
-                    return parser.build();
-                } catch (IOException e) {
-                    throw new RuntimeException();
-                } catch (ParseException e) {
-                    throw new RuntimeException();
-                }
-            } else
+        private SynonymMap getSynonymMap(final String synonyms, final boolean expand) {
+            if (synonyms == null) {
                 return null;
+            }
+            final SolrSynonymParser parser = new SolrSynonymParser(true, expand, SynonymLoader.getAnalyzer(true));
+            try {
+                parser.parse(new StringReader(synonyms.replace('/', '\n')));
+                return parser.build();
+            } catch (final IOException | ParseException e) {
+                throw new RuntimeException();
+            }
         }
     }
 }

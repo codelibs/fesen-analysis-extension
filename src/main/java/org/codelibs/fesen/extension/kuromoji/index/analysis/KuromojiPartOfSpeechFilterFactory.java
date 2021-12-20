@@ -36,9 +36,10 @@ public class KuromojiPartOfSpeechFilterFactory extends AbstractTokenFilterFactor
 
     private final Set<String> stopTags = new HashSet<>();
 
-    public KuromojiPartOfSpeechFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+    public KuromojiPartOfSpeechFilterFactory(final IndexSettings indexSettings, final Environment env, final String name,
+            final Settings settings) {
         super(indexSettings, name, settings);
-        List<String> wordList = Analysis.getWordList(env, settings, "stoptags");
+        final List<String> wordList = Analysis.getWordList(env, settings, "stoptags");
         if (wordList != null) {
             stopTags.addAll(wordList);
         } else {
@@ -47,7 +48,7 @@ public class KuromojiPartOfSpeechFilterFactory extends AbstractTokenFilterFactor
     }
 
     @Override
-    public TokenStream create(TokenStream tokenStream) {
+    public TokenStream create(final TokenStream tokenStream) {
         return new JapanesePartOfSpeechStopFilter(tokenStream, stopTags);
     }
 
